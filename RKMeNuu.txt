@@ -1,0 +1,143 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. RKMENU.
+
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+       COPY DFHAID.
+       COPY DFHBMSCA.
+       COPY RKMAP.
+       COPY RTCOMM.
+       COPY RTPROGS.
+
+       01 RESP-CODE       PIC S9(8) COMP.
+       01 END-MESSAGE     PIC X(20) VALUE 'FINISHED'.
+       01 WS-OPTION       PIC X.
+
+       LINKAGE SECTION.
+       01 DFHCOMMAREA     PIC X(100).
+
+       PROCEDURE DIVISION USING DFHCOMMAREA.
+
+       AA000_MAINLINE SECTION.
+
+           IF EIBCALEN = 0
+               INITIALIZE PROMO-CODE-COMMAREA
+               MOVE LOW-VALUES TO RKMNUI
+               PERFORM CC000_SEND_MAP
+               GOBACK
+           END-IF
+
+           MOVE DFHCOMMAREA TO PROMO-CODE-COMMAREA
+
+           EXEC CICS RECEIVE
+               MAP('RKMNU')
+               MAPSET('RKMAP')
+               INTO(RKMNUI)
+               RESP(RESP-CODE)
+           END-EXEC
+
+           IF RESP-CODE NOT = DFHRESP(NORMAL)
+               MOVE 'SCREEN INPUT ERROR' TO MSG1OI
+               PERFORM CC000_SEND_MAP
+               GOBACK
+           END-IF
+
+           EVALUATE EIBAID
+               WHEN DFHPF3
+                   EXEC CICS SEND CONTROL
+                       ERASE
+                   END-EXEC
+
+                   EXEC CICS SEND TEXT
+                       FROM(END-MESSAGE)
+                       LENGTH(8)
+                       FREEKB
+                   END-EXEC
+
+                   EXEC CICS RETURN
+                       END-EXEC
+
+               WHEN DFHENTER
+                   PERFORM BB000_PROCESS_OPTION
+
+               WHEN OTHER
+                   MOVE 'INVALID KEY PRESSED' TO MSG1OI
+                   PERFORM CC000_SEND_MAP
+           END-EVALUATE
+           .
+
+       BB000_PROCESS_OPTION SECTION.
+
+           MOVE OPT1II TO WS-OPTION
+
+           IF WS-OPTION NOT = '5' AND PCODEII = SPACES
+               MOVE 'ENTER PROMO CODE' TO MSG1OI
+               PERFORM CC000_SEND_MAP
+               EXIT SECTION
+           END-IF
+
+           MOVE PCODEII TO PROMO-CODE-IN-COMMAREA
+           MOVE WS-OPTION TO PROMO-OPTION-IN-COMMAREA
+           SET PROMO-CODE-MENU TO TRUE
+
+           EVALUATE WS-OPTION
+               WHEN '1'
+                   SET PROMOTION-VIEW TO TRUE
+                   EXEC CICS XCTL
+                       PROGRAM(RTDISP-PGM)
+                       COMMAREA(PROMO-CODE-COMMAREA)
+                   END-EXEC
+
+               WHEN '2'
+                   SET PROMO-ADD TO TRUE
+                   EXEC CICS XCTL
+                       PROGRAM(RTADD-PGM)
+                       COMMAREA(PROMO-CODE-COMMAREA)
+                   END-EXEC
+
+               WHEN '3'
+                   SET PROMO-AMEND TO TRUE
+                   EXEC CICS XCTL
+                       PROGRAM(RTAMND-PGM)
+                       COMMAREA(PROMO-CODE-COMMAREA)
+                   END-EXEC
+
+               WHEN '4'
+                   SET PROMO-DELETE TO TRUE
+                   EXEC CICS XCTL
+                       PROGRAM(RTDELT-PGM)
+                       COMMAREA(PROMO-CODE-COMMAREA)
+                   END-EXEC
+
+               WHEN '5'
+                   EXEC CICS XCTL
+                       PROGRAM(RTLIST-PGM)
+                       COMMAREA(PROMO-CODE-COMMAREA)
+                   END-EXEC
+
+               WHEN OTHER
+                   MOVE 'INVALID OPTION' TO MSG1OI
+                   PERFORM CC000_SEND_MAP
+           END-EVALUATE
+           .
+
+       CC000_SEND_MAP SECTION.
+
+           MOVE SPACES TO RKMNUI
+
+           EXEC CICS SEND
+               MAP('RKMNU')
+               MAPSET('RKMAP')
+               FROM(RKMNUI)
+               ERASE
+               FREEKB
+               RESP(RESP-CODE)
+           END-EXEC
+
+           EXEC CICS RETURN
+               TRANSID('RTRT')
+               COMMAREA(PROMO-CODE-COMMAREA)
+           END-EXEC
+           .
+
