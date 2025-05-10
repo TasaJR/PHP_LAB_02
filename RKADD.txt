@@ -1,0 +1,145 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. RKADD.
+
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+
+       COPY DFHAID.
+       COPY DFHBMSCA.
+       COPY RKMAP.
+       COPY RTCOMM.
+       COPY RTPROGS.
+       COPY PROMOCDE.
+
+       01 WS-RESP              PIC S9(8) COMP.
+       01 PROMO-CODE-KEY       PIC X(10).
+       01 WS-POSTAGE-DISPLAY   PIC 9(5)V99.
+       01 WS-POSTAGE-ALPHA     PIC X(7).
+       01 WS-POSTAGE-TEXT      PIC ZZZ9.99.
+
+       LINKAGE SECTION.
+       01 DFHCOMMAREA          PIC X(100).
+
+       PROCEDURE DIVISION USING DFHCOMMAREA.
+
+       AA000_MAINLINE SECTION.
+
+           IF EIBCALEN > 0
+               MOVE DFHCOMMAREA TO PROMO-CODE-COMMAREA
+               MOVE PROMO-CODE-IN-COMMAREA TO PROMO-CODE-KEY
+               MOVE PROMO-CODE-IN-COMMAREA TO RKPCDI
+
+               EVALUATE EIBAID
+                   WHEN DFHPF2
+                       PERFORM BB000_VALIDATE_AND_SAVE_RECORD
+                   WHEN DFHPF3
+                       EXEC CICS XCTL
+                           PROGRAM('RKMENU')
+                           COMMAREA(PROMO-CODE-COMMAREA)
+                       END-EXEC
+                   WHEN DFHENTER
+                       PERFORM BB000_HANDLE_ENTER
+                   WHEN OTHER
+                       MOVE 'INVALID KEY' TO RKMSGO
+               END-EVALUATE
+           ELSE
+               MOVE SPACES TO RKMSGO
+               MOVE SPACES TO RKDTLI
+           END-IF
+
+           PERFORM CC000_DISPLAY_SCREEN
+           .
+
+       BB000_HANDLE_ENTER SECTION.
+
+           IF PROMO-CODE-KEY = SPACES
+               MOVE 'ENTER A PROMO CODE' TO RKMSGO
+               EXIT SECTION
+           END-IF
+
+           EXEC CICS READ FILE('PROMOCDE')
+               INTO(PROMOTION-CODE-RECORD)
+               RIDFLD(PROMO-CODE-KEY)
+               RESP(WS-RESP)
+           END-EXEC
+
+           EVALUATE WS-RESP
+               WHEN DFHRESP(NOTFND)
+                   MOVE 'PROMO NOT FOUND - ADD NEW' TO RKMSGO
+                   MOVE SPACES TO RKDTLI
+                   MOVE PROMO-CODE-KEY TO RKPCDI
+                   EXIT SECTION
+               WHEN DFHRESP(NORMAL)
+                   MOVE PROMO-CODE           TO RKPCDO
+                   MOVE PROMO-SHORT-DESC     TO RKSHDSCO
+                   MOVE PROMO-DESC(1:50)     TO RKFDESCO
+                   MOVE PROMO-VALID-FROM     TO RKVFROMO
+                   MOVE PROMO-VALID-TO       TO RKVTOO
+                   MOVE PROMO-NEW-CUST       TO RKNEWCO
+                   MOVE PROMO-MAX-USES       TO RKMAXUO
+                   MOVE PROMO-MAX-DISC       TO RKMAXDO
+                   MOVE PROMO-POSTAGE-COST   TO WS-POSTAGE-DISPLAY
+                   MOVE WS-POSTAGE-DISPLAY   TO WS-POSTAGE-TEXT
+                   STRING WS-POSTAGE-TEXT DELIMITED BY SIZE
+                          INTO WS-POSTAGE-ALPHA
+                   MOVE WS-POSTAGE-ALPHA     TO RKPOSTGO
+                   MOVE 'PROMO ALREADY EXISTS' TO RKMSGO
+                   EXIT SECTION
+               WHEN OTHER
+                   MOVE 'ERROR READING FILE' TO RKMSGO
+                   EXIT SECTION
+           END-EVALUATE
+           .
+
+       BB000_VALIDATE_AND_SAVE_RECORD SECTION.
+
+           IF PROMO-CODE-KEY = SPACES
+               MOVE 'ENTER A PROMO CODE' TO RKMSGO
+               EXIT SECTION
+           END-IF
+
+           MOVE RKPCDI         TO PROMO-CODE
+           MOVE RKSHDSCI       TO PROMO-SHORT-DESC
+           MOVE RKFDESCI       TO PROMO-DESC(1:50)
+           MOVE RKVFROMI       TO PROMO-VALID-FROM
+           MOVE RKVTOI         TO PROMO-VALID-TO
+           MOVE RKNEWCI        TO PROMO-NEW-CUST
+           MOVE RKMAXUI        TO PROMO-MAX-USES
+           MOVE RKMAXDI        TO PROMO-MAX-DISC
+           MOVE RKPOSTGI       TO PROMO-POSTAGE-COST
+
+           EXEC CICS WRITE FILE('PROMOCDE')
+               FROM(PROMOTION-CODE-RECORD)
+               RIDFLD(PROMO-CODE)
+               RESP(WS-RESP)
+           END-EXEC
+
+           EVALUATE WS-RESP
+               WHEN DFHRESP(NORMAL)
+                   MOVE 'PROMO ADDED OK' TO RKMSGO
+               WHEN DFHRESP(DUPREC)
+                   MOVE 'DUPLICATE RECORD' TO RKMSGO
+               WHEN DFHRESP(NOSPACE)
+                   MOVE 'FILE FULL' TO RKMSGO
+               WHEN DFHRESP(LOCKED)
+                   MOVE 'FILE LOCKED' TO RKMSGO
+               WHEN OTHER
+                   MOVE 'WRITE FAILED' TO RKMSGO
+           END-EVALUATE
+           .
+
+       CC000_DISPLAY_SCREEN SECTION.
+
+           EXEC CICS SEND MAP('RKDTL')
+               MAPSET('RKMAP')
+               ERASE
+               FREEKB
+               RESP(WS-RESP)
+           END-EXEC
+
+           EXEC CICS RETURN
+               TRANSID('RTRT')
+               COMMAREA(PROMO-CODE-COMMAREA)
+           END-EXEC
+           .
+

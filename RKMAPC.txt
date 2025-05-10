@@ -1,0 +1,100 @@
+       01  RKMNUI.
+           02  FILLER PIC X(12).
+           02  PCODEIL    COMP  PIC  S9(4).
+           02  PCODEIF    PICTURE X.
+           02  FILLER REDEFINES PCODEIF.
+             03 PCODEIA    PICTURE X.
+           02  PCODEII  PIC X(6).
+           02  OPT1IL    COMP  PIC  S9(4).
+           02  OPT1IF    PICTURE X.
+           02  FILLER REDEFINES OPT1IF.
+             03 OPT1IA    PICTURE X.
+           02  OPT1II  PIC X(1).
+           02  MSG1OL    COMP  PIC  S9(4).
+           02  MSG1OF    PICTURE X.
+           02  FILLER REDEFINES MSG1OF.
+             03 MSG1OA    PICTURE X.
+           02  MSG1OI  PIC X(29).
+       01  RKMNUO REDEFINES RKMNUI.
+           02  FILLER PIC X(12).
+           02  FILLER PICTURE X(3).
+           02  PCODEIO  PIC X(6).
+           02  FILLER PICTURE X(3).
+           02  OPT1IO  PIC X(1).
+           02  FILLER PICTURE X(3).
+           02  MSG1OO  PIC X(29).
+       01  RKDTLI REDEFINES RKMNUI.
+           02  FILLER PIC X(12).
+           02  RKPCDL    COMP  PIC  S9(4).
+           02  RKPCDF    PICTURE X.
+           02  FILLER REDEFINES RKPCDF.
+             03 RKPCDA    PICTURE X.
+           02  RKPCDI  PIC X(6).
+           02  RKSHDSCL    COMP  PIC  S9(4).
+           02  RKSHDSCF    PICTURE X.
+           02  FILLER REDEFINES RKSHDSCF.
+             03 RKSHDSCA    PICTURE X.
+           02  RKSHDSCI  PIC X(20).
+           02  RKFDESCL    COMP  PIC  S9(4).
+           02  RKFDESCF    PICTURE X.
+           02  FILLER REDEFINES RKFDESCF.
+             03 RKFDESCA    PICTURE X.
+           02  RKFDESCI  PIC X(50).
+           02  RKVFROML    COMP  PIC  S9(4).
+           02  RKVFROMF    PICTURE X.
+           02  FILLER REDEFINES RKVFROMF.
+             03 RKVFROMA    PICTURE X.
+           02  RKVFROMI  PIC X(8).
+           02  RKVTOL    COMP  PIC  S9(4).
+           02  RKVTOF    PICTURE X.
+           02  FILLER REDEFINES RKVTOF.
+             03 RKVTOA    PICTURE X.
+           02  RKVTOI  PIC X(8).
+           02  RKNEWCL    COMP  PIC  S9(4).
+           02  RKNEWCF    PICTURE X.
+           02  FILLER REDEFINES RKNEWCF.
+             03 RKNEWCA    PICTURE X.
+           02  RKNEWCI  PIC X(1).
+           02  RKMAXUL    COMP  PIC  S9(4).
+           02  RKMAXUF    PICTURE X.
+           02  FILLER REDEFINES RKMAXUF.
+             03 RKMAXUA    PICTURE X.
+           02  RKMAXUI  PIC X(2).
+           02  RKMAXDL    COMP  PIC  S9(4).
+           02  RKMAXDF    PICTURE X.
+           02  FILLER REDEFINES RKMAXDF.
+             03 RKMAXDA    PICTURE X.
+           02  RKMAXDI  PIC X(3).
+           02  RKPOSTGL    COMP  PIC  S9(4).
+           02  RKPOSTGF    PICTURE X.
+           02  FILLER REDEFINES RKPOSTGF.
+             03 RKPOSTGA    PICTURE X.
+           02  RKPOSTGI  PIC X(6).
+           02  RKMSGL    COMP  PIC  S9(4).
+           02  RKMSGF    PICTURE X.
+           02  FILLER REDEFINES RKMSGF.
+             03 RKMSGA    PICTURE X.
+           02  RKMSGI  PIC X(76).
+       01  RKDTLO REDEFINES RKDTLI.
+           02  FILLER PIC X(12).
+           02  FILLER PICTURE X(3).
+           02  RKPCDO  PIC X(6).
+           02  FILLER PICTURE X(3).
+           02  RKSHDSCO  PIC X(20).
+           02  FILLER PICTURE X(3).
+           02  RKFDESCO  PIC X(50).
+           02  FILLER PICTURE X(3).
+           02  RKVFROMO  PIC X(8).
+           02  FILLER PICTURE X(3).
+           02  RKVTOO  PIC X(8).
+           02  FILLER PICTURE X(3).
+           02  RKNEWCO  PIC X(1).
+           02  FILLER PICTURE X(3).
+           02  RKMAXUO  PIC X(2).
+           02  FILLER PICTURE X(3).
+           02  RKMAXDO  PIC X(3).
+           02  FILLER PICTURE X(3).
+           02  RKPOSTGO  PIC X(6).
+           02  FILLER PICTURE X(3).
+           02  RKMSGO  PIC X(76).
+

@@ -1,0 +1,29 @@
+        01 PROMO-CODE-COMMAREA.                                         00010023
+           05 PROMO-CODE-IN-COMMAREA     PIC X(6).                      00075022
+           05 PROMO-OPTION-IN-COMMAREA   PIC X(1).                      00075222
+           05 RT-FLAGS.                                                 00075724
+              10 PROMO-CODE-FLAG         PIC X VALUE 'N'.               00075824
+                 88 PROMO-CODE-VALID         VALUE 'Y'.                 00075924
+                 88 PROMO-CODE-NOT-VALID     VALUE 'N'.                 00076026
+              10 LAST-MENU-FLAG          PIC X VALUE 'N'.               00076124
+                 88 LAST-MENU                VALUE 'Y'.                 00076224
+                 88 NOT-LAST-MENU            VALUE 'N'.                 00077024
+              10 LAST-DISP-FLAG          PIC X VALUE 'N'.               00078027
+                 88 LAST-DISP                VALUE 'Y'.                 00079027
+                 88 NOT-LAST-DISP            VALUE 'N'.                 00080027
+                                                                        00090027
+              10 PROMO-CODE-MENU-FLAG    PIC X VALUE 'N'.               00100027
+                 88 PROMO-CODE-MENU          VALUE 'Y'.                 00110027
+                 88 NOT-PROMO-CODE-MENU      VALUE 'N'.                 00120027
+              10 ADD-SCREEN-FLAG         PIC X VALUE 'N'.               00130028
+                 88 ADD-SCREEN-SENT          VALUE 'Y'.                 00140028
+                 88 ADD-SCREEN-NOT-SENT      VALUE 'N'.                 00150028
+                                                                        00160030
+              10 PROMO-FUNCTION         PIC X VALUE SPACE.              00180030
+                 88  PROMOTION-MENU     VALUE 'M'.                      00190030
+                 88  PROMOTION-VIEW     VALUE 'V'.                      00200030
+                 88  PROMO-ADD          VALUE 'A'.                      00210030
+                 88  PROMO-AMEND        VALUE 'C'.                      00220030
+                 88  PROMO-DELETE       VALUE 'D'.                      00230030
+              10 FILLER                  PIC X(54).                     00240030
+

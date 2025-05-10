@@ -1,0 +1,8 @@
+        01 NEXT-PROGRAM-NAMES.                                          00010015
+           05 RTMENU-PGM     PIC X(8) VALUE 'RKMENU'.                   00020017
+           05 RTDISP-PGM     PIC X(8) VALUE 'RKDISP'.                   00075017
+           05 RTADD-PGM      PIC X(8) VALUE 'RKADD'.                    00075217
+           05 RTAMND-PGM     PIC X(8) VALUE 'RKAMND'.                   00075317
+           05 RTDELT-PGM     PIC X(8) VALUE 'RKDELT'.                   00075417
+           05 RTLIST-PGM     PIC X(8) VALUE 'RKLIST'.                   00075517
+
